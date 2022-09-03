@@ -19,6 +19,9 @@ RUN mkdir /.cache && \
 # INSTALL DOCKER
 COPY --from=docker:dind /usr/local/bin/docker /usr/local/bin/docker
 
+# INSTALL JQ
+RUN apk add --no-cache jq
+
 # SETUP SUPERCRONIC FOR NON-ROOT USER
 ENV SUPERCRONIC_VERSION="v0.2.1"
 RUN wget https://github.com/aptible/supercronic/releases/download/${SUPERCRONIC_VERSION}/supercronic-linux-amd64 -O /usr/local/bin/supercronic && \
