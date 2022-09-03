@@ -4,7 +4,7 @@ cd "$(dirname "$0")"
 
 echo "Scanning images of all running containers . . ."
 
-IMAGES="$(docker ps --format "{{.Image}}")"
+IMAGES="$(docker ps --format "{{.Image}}" | sort | uniq)"
 TOTAL="$(echo "${IMAGES}" | wc -l)"
 
 i=0
