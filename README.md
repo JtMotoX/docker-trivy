@@ -10,7 +10,10 @@ This will perform a vulnerability scan of all images of currently running contai
 1. Press `CTRL+C` to stop tailing the container logs (container will continue to run)
 1. The scan logs will be stored in the [scan-logs](/scan-logs) directory
 
-NOTE: The scans run on a schedule, however, if you want to trigger a manual scan, execute `docker-compose run --rm trivy /scripts/scan-all.sh`.
+## Manual Scan
+NOTE: The scans run on a schedule, however, you can trigger a manual scan. Below are some examples.
+- `docker-compose run --rm trivy /scripts/scan.sh jtmotox/docker-trivy:local`
+- `docker-compose run --rm trivy /scripts/scan-all.sh`
 
 ## Parsing Logs Examples
 
