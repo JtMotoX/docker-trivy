@@ -6,6 +6,7 @@ services:
       context: ./build
       args:
         DOCKER_GID: ${DOCKER_GID}
+    image: jtmotox/docker-trivy:local
     container_name: trivy
     restart: always
     env_file: .env
