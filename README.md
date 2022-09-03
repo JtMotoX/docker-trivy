@@ -1,7 +1,7 @@
 # docker-trivy
 
 ## Description
-This will perform a vulnerability scan of all images of currently running containers.  The schedule is defined in the [crontab](/build/crontab) file. It is recommended to have the log files pushed into a logging tool such as Splunk for analysis and alerting.
+This will perform a vulnerability scan of all images of currently running containers.  The schedule is defined in the [crontab](/build/crontab) file. It is recommended to have the log files pushed into a logging tool such as Splunk (will need to set TRUNCATE=0 in props.conf) for analysis and alerting.
 
 ## Instructions
 1. Determine the host docker gid: `stat -c '%g' /var/run/docker.sock`
