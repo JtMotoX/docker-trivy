@@ -14,6 +14,7 @@ This will perform a vulnerability scan of all images of currently running contai
 NOTE: The scans run on a schedule, however, you can trigger a manual scan. Below are some examples.
 - `docker-compose run --rm trivy /scripts/scan.sh jtmotox/docker-trivy:local`
 - `docker-compose run --rm trivy /scripts/scan-all.sh`
+- `docker run --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/aquasecurity/trivy:latest image nginx:latest`
 
 ## Parsing Logs Examples
 
