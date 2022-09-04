@@ -1,2 +1,2 @@
-# SCAN ALL IMAGES EVERY SUNDAY AT MIDNIGHT
-0 0 1 * * /scripts/scan-all.sh >/dev/null 2>&1
+# SCAN ALL IMAGES EVERY DAY AT MIDNIGHT
+0 0 * * * /scripts/scan-all.sh >/dev/null 2>&1
