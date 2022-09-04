@@ -13,3 +13,5 @@ echo "${IMAGES}" | while read -r IMAGE; do
 	echo "[ $i of ${TOTAL} ]"
 	./scan.sh ${IMAGE}
 done
+
+echo "Finished"
