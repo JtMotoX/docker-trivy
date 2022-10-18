@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 IMAGE="$1"
 
 echo "Scanning ${IMAGE} . . ."
@@ -28,6 +30,14 @@ trivy image ${IMAGE} --security-checks vuln --ignore-unfixed -f json -o "${COMBI
 
 # CAPTURE THE FULL RESULTS
 jq -c -r --arg date "$(date +"%Y-%m-%dT%H:%M:%S%z")" '{"ScanTime": $date} + . | .ScanTime = $date' "${COMBINED_TMPFILE}" >"${COMBINED_LOGFILE}"
+
+# GET NUMBER OF VULNERABILITIES
+VULNERABILITY_COUNT=$(jq -r '.Results[]?.Vulnerabilities // empty' "${COMBINED_LOGFILE}" | jq -s 'flatten | length')
+VULNERABILITY_COUNT=${VULNERABILITY_COUNT:-0}
+if [ "${VULNERABILITY_COUNT}" -eq 0 ]; then
+	echo "No vulnerabilities"
+	exit 0
+fi
 
 # PARSE RESULTS INTO INDIVIDUAL ARRAYS
 VULNERABILITIES="$(jq -c -r '[(. | del(.Results)) + (.Results[] | del(.Vulnerabilities)) + .Results[].Vulnerabilities[]]' "${COMBINED_LOGFILE}")"
