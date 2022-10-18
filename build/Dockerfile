@@ -5,7 +5,10 @@ ARG DOCKER_GID
 # SETUP USER
 ARG USER_NAME=appuser
 ARG USER_ID=9001
-RUN adduser -u ${USER_ID} -S ${USER_NAME}
+ARG GROUP_NAME=appuser
+ARG GROUP_ID=9001
+RUN addgroup -g ${GROUP_ID} ${GROUP_NAME}
+RUN adduser -u ${USER_ID} -S ${USER_NAME} -G ${GROUP_NAME}
 
 # ALLOW USER TO RUN ACCESS DOCKER SOCK
 RUN addgroup -g ${DOCKER_GID} docker
@@ -35,7 +38,7 @@ RUN supercronic -json -test /crontab
 COPY --chmod=755 ./scripts /scripts
 
 # RUN AS USER
-USER ${USER_ID}:${USER_ID}
+USER ${USER_ID}
 
 ENTRYPOINT [ "/scripts/entrypoint.sh" ]
 CMD [ "run" ]
