@@ -29,10 +29,10 @@ touch "${COMBINED_TMPFILE}"
 trivy image ${IMAGE} --security-checks vuln --ignore-unfixed -f json -o "${COMBINED_TMPFILE}"
 
 # CAPTURE THE FULL RESULTS
-jq -c -r --arg date "$(date +"%Y-%m-%dT%H:%M:%S%z")" '{"ScanTime": $date} + . | .ScanTime = $date' "${COMBINED_TMPFILE}" >"${COMBINED_LOGFILE}"
+cat "${COMBINED_TMPFILE}" | jq -c -r --arg date "$(date +"%Y-%m-%dT%H:%M:%S%z")" '{"ScanTime": $date} + . | .ScanTime = $date' >"${COMBINED_LOGFILE}"
 
 # GET NUMBER OF VULNERABILITIES
-VULNERABILITY_COUNT=$(jq -r '.Results[]?.Vulnerabilities // empty' "${COMBINED_LOGFILE}" | jq -s 'flatten | length')
+VULNERABILITY_COUNT=$(cat "${COMBINED_LOGFILE}" | jq -r '.Results[]?.Vulnerabilities // empty' | jq -s 'flatten | length')
 VULNERABILITY_COUNT=${VULNERABILITY_COUNT:-0}
 if [ "${VULNERABILITY_COUNT}" -eq 0 ]; then
 	echo "No vulnerabilities"
@@ -40,7 +40,7 @@ if [ "${VULNERABILITY_COUNT}" -eq 0 ]; then
 fi
 
 # PARSE RESULTS INTO INDIVIDUAL ARRAYS
-VULNERABILITIES="$(jq -c -r '[(. | del(.Results)) + (.Results[] | del(.Vulnerabilities)) + .Results[].Vulnerabilities[]]' "${COMBINED_LOGFILE}")"
+VULNERABILITIES="$(cat "${COMBINED_LOGFILE}" | jq -c -r '[(. | del(.Results)) + (.Results[] | del(.Vulnerabilities)) + .Results[].Vulnerabilities[]]')"
 
 # DUMP ARRAYS TO INDIVIDUAL FILES
 i=0
