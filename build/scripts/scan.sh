@@ -40,7 +40,13 @@ if [ "${VULNERABILITY_COUNT}" -eq 0 ]; then
 fi
 
 # PARSE RESULTS INTO INDIVIDUAL ARRAYS
-VULNERABILITIES="$(cat "${COMBINED_LOGFILE}" | jq -c -r '[(. | del(.Results)) + (.Results[] | del(.Vulnerabilities)) + .Results[].Vulnerabilities[]]')"
+VULNERABILITIES="$(cat "${COMBINED_LOGFILE}" | jq -c -r '
+	[
+		(. | del(.Results)) +
+		(.Results[] | del(.Vulnerabilities)) +
+		(.Results[].Vulnerabilities | select(. != null) | .[])
+	]
+')"
 
 # DUMP ARRAYS TO INDIVIDUAL FILES
 i=0
