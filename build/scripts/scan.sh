@@ -26,7 +26,7 @@ find "${SCANLOGS_DIR}" -type f -exec sh -c "chmod 644 {}" \;
 
 # SCAN IMAGE
 touch "${COMBINED_TMPFILE}"
-trivy image ${IMAGE} --security-checks vuln --ignore-unfixed -f json -o "${COMBINED_TMPFILE}"
+trivy image ${IMAGE} --scanners vuln --ignore-unfixed -f json -o "${COMBINED_TMPFILE}"
 
 # CAPTURE THE FULL RESULTS
 cat "${COMBINED_TMPFILE}" | jq -c -r --arg date "$(date +"%Y-%m-%dT%H:%M:%S%z")" '{"ScanTime": $date} + . | .ScanTime = $date' >"${COMBINED_LOGFILE}"
