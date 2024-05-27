@@ -1,7 +1,5 @@
 FROM ghcr.io/aquasecurity/trivy:latest
 
-ARG DOCKER_GID
-
 # SETUP USER
 ARG USER_NAME=appuser
 ARG USER_ID=9001
@@ -10,9 +8,11 @@ ARG GROUP_ID=9001
 RUN addgroup -g ${GROUP_ID} ${GROUP_NAME}
 RUN adduser -u ${USER_ID} -S ${USER_NAME} -G ${GROUP_NAME}
 
+ENV SCANLOGS_DIR="/var/log/scan-logs"
+
 # ALLOW USER TO RUN ACCESS DOCKER SOCK
-RUN addgroup -g ${DOCKER_GID} docker
-RUN addgroup ${USER_NAME} docker
+RUN apk add --no-cache sudo
+RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD: /usr/local/bin/docker" > /etc/sudoers.d/${USER_NAME}
 
 # FIX PERMISSIONS FOR TRIVY CACHE
 RUN mkdir /.cache && \
@@ -28,10 +28,9 @@ RUN apk add --no-cache jq
 RUN apk add --no-cache tzdata
 
 # SETUP SUPERCRONIC FOR NON-ROOT USER
-ENV SUPERCRONIC_VERSION="v0.2.1"
-RUN wget https://github.com/aptible/supercronic/releases/download/${SUPERCRONIC_VERSION}/supercronic-linux-amd64 -O /usr/local/bin/supercronic && \
-	chmod 755 /usr/local/bin/supercronic
+ADD --chmod=755 https://github.com/aptible/supercronic/releases/latest/download/supercronic-linux-amd64 /usr/local/bin/supercronic
 COPY --chmod=644 ./crontab /crontab
+RUN install -m 644 -o ${USER_ID} -g ${GROUP_ID} /dev/null /crontab
 RUN supercronic -json -test /crontab
 
 # COPY SCRIPTS

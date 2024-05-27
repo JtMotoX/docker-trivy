@@ -8,7 +8,7 @@ echo "Scanning images of all running containers . . ."
 
 DOCKER_STDOUT_FILE="/tmp/docker-stdout.log"
 
-IMAGES="$(docker ps --format "{{.Image}}" 2>${DOCKER_STDOUT_FILE} | sort | uniq)"
+IMAGES="$(sudo docker ps --format "{{.Image}}" 2>${DOCKER_STDOUT_FILE} | sort | uniq)"
 
 DOCKER_STDOUT="$(cat ${DOCKER_STDOUT_FILE})"
 rm -f "${DOCKER_STDOUT_FILE}"

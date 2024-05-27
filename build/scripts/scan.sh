@@ -7,7 +7,7 @@ IMAGE="$1"
 echo "Scanning ${IMAGE} . . ."
 
 # DEFINE VARIABLES
-SCANLOGS_DIR="/var/log/scan-logs"
+SCANLOGS_DIR="${SCANLOGS_DIR:-"/var/log/scan-logs"}"
 FILE_PREFIX="$(date "+%s")"
 COMBINED_LOGFILE="${SCANLOGS_DIR}/combined/${FILE_PREFIX}_${IMAGE/\//+}.json"
 SPLIT_LOGDIR="${SCANLOGS_DIR}/individual/${IMAGE/\//+}"

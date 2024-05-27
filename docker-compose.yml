@@ -2,10 +2,7 @@ version: '3'
 
 services:
   trivy:
-    build:
-      context: ./build
-      args:
-        DOCKER_GID: ${DOCKER_GID}
+    build: ./build
     image: jtmotox/docker-trivy:local
     container_name: trivy
     restart: always
