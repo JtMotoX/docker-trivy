@@ -29,7 +29,6 @@ RUN apk add --no-cache tzdata
 
 # SETUP SUPERCRONIC FOR NON-ROOT USER
 ADD --chmod=755 https://github.com/aptible/supercronic/releases/latest/download/supercronic-linux-amd64 /usr/local/bin/supercronic
-COPY --chmod=644 ./crontab /crontab
 RUN install -m 644 -o ${USER_ID} -g ${GROUP_ID} /dev/null /crontab
 RUN supercronic -json -test /crontab
 
