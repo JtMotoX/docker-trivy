@@ -21,8 +21,8 @@ mkdir -p "${SPLIT_LOGDIR}"
 mkdir -p "$(dirname "${COMBINED_TMPFILE}")"
 mkdir -p "${SPLIT_TMPDIR}"
 chmod 755 "${SCANLOGS_DIR}"
-find "${SCANLOGS_DIR}" -type d -exec sh -c "chmod 755 {}" \;
-find "${SCANLOGS_DIR}" -type f -exec sh -c "chmod 644 {}" \;
+find "${SCANLOGS_DIR}" -type d ! -perm 755 -exec sh -c "chmod 755 {}" \;
+find "${SCANLOGS_DIR}" -type f ! -perm 644 -exec sh -c "chmod 644 {}" \;
 
 # SCAN IMAGE
 touch "${COMBINED_TMPFILE}"
