@@ -25,8 +25,8 @@ find "${SCANLOGS_DIR}" -type d ! -perm 755 -exec sh -c "chmod 755 {}" \;
 find "${SCANLOGS_DIR}" -type f ! -perm 644 -exec sh -c "chmod 644 {}" \;
 
 # SCAN IMAGE
-touch "${COMBINED_TMPFILE}"
-trivy image ${IMAGE} --scanners vuln --ignore-unfixed -f json -o "${COMBINED_TMPFILE}"
+IMAGE="${IMAGE}" COMBINED_TMPFILE="${COMBINED_TMPFILE}" OWNER_UID="$(id -u)" OWNER_GID="$(id -g)" \
+	sudo --preserve-env /scripts/trivy-scan.sh
 
 # CAPTURE THE FULL RESULTS
 cat "${COMBINED_TMPFILE}" | jq -c -r --arg date "$(date +"%Y-%m-%dT%H:%M:%S%z")" '{"ScanTime": $date} + . | .ScanTime = $date' >"${COMBINED_LOGFILE}"

@@ -10,10 +10,6 @@ RUN adduser -u ${USER_ID} -S ${USER_NAME} -G ${GROUP_NAME}
 
 ENV SCANLOGS_DIR="/var/log/scan-logs"
 
-# ALLOW USER TO RUN ACCESS DOCKER SOCK
-RUN apk add --no-cache sudo
-RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD: /usr/local/bin/docker" > /etc/sudoers.d/${USER_NAME}
-
 # FIX PERMISSIONS FOR TRIVY CACHE
 RUN mkdir /.cache && \
 	chown -R ${USER_ID}:${GROUP_ID} /.cache
@@ -31,6 +27,12 @@ RUN apk add --no-cache tzdata
 ADD --chmod=755 https://github.com/aptible/supercronic/releases/latest/download/supercronic-linux-amd64 /usr/local/bin/supercronic
 RUN install -m 644 -o ${USER_ID} -g ${GROUP_ID} /dev/null /crontab
 RUN supercronic -json -test /crontab
+
+# ALLOW USER TO RUN ACCESS DOCKER SOCK
+RUN apk add --no-cache sudo
+RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD:SETENV: /scripts/list-images.sh" >> /etc/sudoers.d/${USER_NAME}
+RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD:SETENV: /scripts/trivy-scan.sh" >> /etc/sudoers.d/${USER_NAME}
+RUN cat /etc/sudoers.d/${USER_NAME}
 
 # COPY SCRIPTS
 COPY --chmod=755 ./scripts /scripts
