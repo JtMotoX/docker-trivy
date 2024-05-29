@@ -15,7 +15,7 @@ if [ "$1" = "run" ]; then
 	fi
 
 	echo "Starting cron"
-	echo "${SCAN_SCHEDULE:-"0 0 * * *"} /scripts/scan-all.sh >/dev/null 2>&1" >>/crontab
+	echo "${SCAN_SCHEDULE:-"0 0 * * *"} /scripts/scan-all.sh >/tmp/scan-all.log 2>&1" >>/crontab
 	supercronic /crontab
 
 	echo "Oops! Looks like cron stopped."
