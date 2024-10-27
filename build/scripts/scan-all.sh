@@ -35,4 +35,9 @@ echo "${IMAGES}" | while read -r IMAGE; do
 	./scan.sh ${IMAGE}
 done
 
+echo '------'
+cd "${SCANLOGS_DIR}/combined/"
+find . -name "*.json" | while read -r LOGFILE; do cat "${LOGFILE}" | jq -r '.Results[] | select(.Vulnerabilities) | .Vulnerabilities[] | .Severity + "~" + .PkgName + "~Fixed in " + .FixedVersion + "~" + .VulnerabilityID' | grep -v -E '^(MEDIUM|LOW|UNKNOWN)' | wc -l | xargs -I {} echo "{} ${LOGFILE}"; done | sort -rn
+echo '------'
+
 echo "Finished"
