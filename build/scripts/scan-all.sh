@@ -24,6 +24,10 @@ if [ "${TOTAL}" -le 0 ]; then
 	echo "No Images found"
 fi
 
+SCANLOGS_DIR="${SCANLOGS_DIR:-"/var/log/scan-logs"}"
+rm -rf "${SCANLOGS_DIR}/combined/"
+rm -rf "${SCANLOGS_DIR}/individual/"
+
 i=0
 echo "${IMAGES}" | while read -r IMAGE; do
 	i=$(( i + 1 ))
