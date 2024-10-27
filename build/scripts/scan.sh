@@ -50,12 +50,9 @@ VULNERABILITIES="$(cat "${COMBINED_LOGFILE}" | jq -c -r '
 
 # DUMP ARRAYS TO INDIVIDUAL FILES
 i=0
-for row in $(echo "${VULNERABILITIES}" | jq -r '.[] | @base64'); do
+for VULNERABILITY_DATA_b64 in $(echo "${VULNERABILITIES}" | jq -c -r '.[] | @base64'); do
 	i=$((i+1))
-    _jq() {
-		echo ${row} | base64 -d | jq -c -r ${1}
-    }
-	echo $(_jq '.') >"${SPLIT_TMPDIR}/${i}.json"
+	printf '%s' "${VULNERABILITY_DATA_b64}" | base64 -d | jq -c 'del(.Metadata.ImageConfig.history)' >"${SPLIT_TMPDIR}/${i}.json"
 	mv "${SPLIT_TMPDIR}/${i}.json" "${SPLIT_LOGDIR}/${FILE_PREFIX}_${i}.json"
 done
 
