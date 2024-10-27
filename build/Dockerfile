@@ -11,8 +11,7 @@ RUN adduser -u ${USER_ID} -S ${USER_NAME} -G ${GROUP_NAME}
 ENV SCANLOGS_DIR="/var/log/scan-logs"
 
 # FIX PERMISSIONS FOR TRIVY CACHE
-RUN mkdir /.cache && \
-	chown -R ${USER_ID}:${GROUP_ID} /.cache
+RUN install -o ${USER_ID} -g ${GROUP_ID} -d /.cache
 
 # INSTALL DOCKER
 COPY --from=docker:dind /usr/local/bin/docker /usr/local/bin/docker
@@ -35,7 +34,7 @@ RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD:SETENV: /scripts/trivy-scan.sh" >> /et
 RUN cat /etc/sudoers.d/${USER_NAME}
 
 # COPY SCRIPTS
-COPY --chmod=755 ./scripts /scripts
+COPY --chmod=755 --chown=root:root ./scripts /scripts
 
 # RUN AS USER
 USER ${USER_ID}
