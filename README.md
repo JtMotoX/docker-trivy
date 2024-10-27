@@ -18,7 +18,7 @@ NOTE: The scans run on a schedule, however, you can trigger a manual scan. Below
 ## Parsing Logs Examples
 
 ```bash
-> cat ./scan-logs/jtmotox/docker-trivy:local.json | jq -r '.Results[].Vulnerabilities[] | .Severity + "~" + .PkgName + "~Fixed in " + .FixedVersion + "~" + .VulnerabilityID' | sort | uniq | column -t -s '~'
+> cat ./scan-logs/combined/1730003018_jtmotox+docker-trivy:local.json | jq -r '.Results[].Vulnerabilities[] | .Severity + "~" + .PkgName + "~Fixed in " + .FixedVersion + "~" + .VulnerabilityID' | sort | uniq | column -t -s '~'
 
 LOW      github.com/aws/aws-sdk-go  Fixed in            CVE-2020-8912
 LOW      libcurl                    Fixed in 7.83.1-r3  CVE-2022-35252
@@ -30,7 +30,7 @@ UNKNOWN  helm.sh/helm/v3            Fixed in 3.9.4      GHSA-7hfp-qfw3-5jxh
 ```
 
 ```bash
-> find ./scan-logs -name "*.json" | while read -r LOGFILE; do echo "${LOGFILE}"; cat "${LOGFILE}" | jq -r '.Results[].Vulnerabilities[] | .Severity + "~" + .PkgName + "~Fixed in " + .FixedVersion + "~" + .VulnerabilityID' | sort | uniq; done | column -t -s '~' | grep -v -E '^(MEDIUM|LOW|UNKNOWN)'
+> find ./scan-logs/combined/ -name "*.json" | while read -r LOGFILE; do echo "${LOGFILE}"; cat "${LOGFILE}" | jq -r '.Results[] | select(.Vulnerabilities) | .Vulnerabilities[] | .Severity + "~" + .PkgName + "~Fixed in " + .FixedVersion + "~" + .VulnerabilityID' | grep -v -E '^(MEDIUM|LOW|UNKNOWN)' | sort | uniq; done | column -t -s '~'
 
 ./scan-logs/mariadb:10.7.json
 HIGH        github.com/opencontainers/runc  Fixed in v1.1.2                 CVE-2022-29162
@@ -42,4 +42,14 @@ CRITICAL    libcurl                         Fixed in 7.83.1-r2              CVE-
 CRITICAL    zlib                            Fixed in 1.2.12-r2              CVE-2022-37434
 HIGH        busybox                         Fixed in 1.35.0-r15             CVE-2022-30065
 HIGH        ssl_client                      Fixed in 1.35.0-r15             CVE-2022-30065
+```
+
+```bash
+find ./scan-logs/combined/ -name "*.json" | while read -r LOGFILE; do cat "${LOGFILE}" | jq -r '.Results[] | select(.Vulnerabilities) | .Vulnerabilities[] | .Severity + "~" + .PkgName + "~Fixed in " + .FixedVersion + "~" + .VulnerabilityID' | grep -v -E '^(MEDIUM|LOW|UNKNOWN)' | wc -l | xargs -I {} echo "{} ${LOGFILE}"; done | sort -rn
+
+226 ./scan-logs/combined/1730000712_clp-prd-clp-web.json
+217 ./scan-logs/combined/1730000508_clp-dev-clp-web.json
+214 ./scan-logs/combined/1730002242_web-apache.json
+207 ./scan-logs/combined/1730000994_jc21+nginx-proxy-manager:latest.json
+...
 ```
